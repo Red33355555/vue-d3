@@ -13,7 +13,7 @@ export default {
     name:'horizontal-bar-chart',
     props:{
         collection:{
-            type:[],
+            type:Array[Number],
             required: true
         },
         barColor:{
@@ -82,13 +82,18 @@ export default {
       .data(this.collection)
       .join('rect')
       .attr('fill',this.barColor)
-      .attr('height',this.barHeight - this.barPadding)
+      .attr('height',this.barHeight)
       .attr('width',d=>this.scale(d))
       .attr('transform', (d,i) =>'translate('+[0+' '+(this.barHeight * 2 * i)]+')');
     },
     addAxis(group){
         group.append('g').call(this.xAxis)
         .attr('transform', 'translate(0 '+(this.height - (this.barPadding * 2))+')');
+        group.append("text")
+        .attr("x", this.chartInnerHeight - (this.barPadding * 2))
+        .attr("y", this.chartInnerWidth)
+        .attr("fill", "currentColor")
+        .text('X-Axis');
     }
   },
   watch:{

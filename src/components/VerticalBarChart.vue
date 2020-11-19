@@ -13,7 +13,7 @@ export default {
     name:'vertical-bar-chart',
     props:{
         collection:{
-            type:[],
+            type:Array[Number],
             required: true
         },
         barColor:{
@@ -83,13 +83,18 @@ export default {
       .join('rect')
       .attr('fill',this.barColor)
       .attr('height',d=> this.scale(d))
-      .attr('width',this.barWidth - this.barPadding)
+      .attr('width',this.barWidth)
     //   .attr('y',d => (this.chartInnerHeight - this.scale(d)))
       .attr('transform', (d,i) =>'translate('+ (this.barWidth*i*2 + this.barPadding) + ' '+(this.chartInnerHeight - this.scale(d)) +')');
     },
     addAxis(group){
         group.append('g').call(this.yAxis)
         .attr('x', this.barPadding);
+        group.append("text")
+        .attr("x", - this.barPadding)
+        .attr("y", 0)
+        .attr("fill", "currentColor")
+        .text('Y-Axis');
     }
   },
   watch:{
