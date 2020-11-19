@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div id="horizontal-chart" class="bottom-border"></div>
+    <div :id="identifier" class="bottom-border"></div>
     <div class="chart-name">
       <h1>Horizontal Bar Chart</h1>
     </div>
@@ -15,6 +15,10 @@ export default {
         collection:{
             type:Array[Number],
             required: true
+        },
+        identifier:{
+          type:String,
+          required:true
         },
         barColor:{
             type:String,
@@ -58,8 +62,8 @@ export default {
   },
   methods:{
     generateCanvas(){
-      d3.select('#horizontal-chart').selectAll('svg').remove();
-        const canvas = d3.select("#horizontal-chart")
+      d3.select(`#${this.identifier}`).selectAll('svg').remove();
+        const canvas = d3.select(`#${this.identifier}`)
         .append("svg")
         .style('background-color',this.backgroundColor )
         .attr('width',this.width)

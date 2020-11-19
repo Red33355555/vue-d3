@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div id="vertical-chart" class="bottom-border"></div>
+    <div :id="identifier" class="bottom-border"></div>
     <div class="chart-name">
       <h1>Vertical Bar Chart</h1>
     </div>
@@ -15,6 +15,10 @@ export default {
         collection:{
             type:Array[Number],
             required: true
+        },
+        identifier:{
+          type:String,
+          required:true
         },
         barColor:{
             type:String,
@@ -44,7 +48,7 @@ export default {
   },
   computed:{
     barPadding(){
-    return this.width * 0.04;
+      return this.width * 0.04;
     },
     chartInnerWidth(){
         return this.width - this.barPadding * 2;
@@ -58,8 +62,8 @@ export default {
   },
   methods:{
     generateCanvas(){
-      d3.select('#vertical-chart').selectAll('svg').remove();
-        const canvas = d3.select("#vertical-chart")
+      d3.select(`#${this.identifier}`).selectAll('svg').remove();
+        const canvas = d3.select(`#${this.identifier}`)
         .append("svg")
         .style('background-color',this.backgroundColor )
         .attr('width',this.width)
@@ -70,11 +74,14 @@ export default {
         this.addAxis(group);
     },
     setScales(){
+      const yScale = d3.scaleLinear()
+                .domain([0,d3.max(this.collection)])
+                .range([this.chartInnerHeight,0]);
       this.scale = d3.scaleLinear()
-      .domain([0,d3.max(this.collection)])
-      .range([0,this.chartInnerHeight]);
+          .domain([0,d3.max(this.collection)])
+          .range([0,this.chartInnerHeight]);
       this.yAxis = d3.axisLeft()
-      .scale(this.scale);
+          .scale(yScale);
     },
     addBars(group){
       group
@@ -84,7 +91,6 @@ export default {
       .attr('fill',this.barColor)
       .attr('height',d=> this.scale(d))
       .attr('width',this.barWidth)
-    //   .attr('y',d => (this.chartInnerHeight - this.scale(d)))
       .attr('transform', (d,i) =>'translate('+ (this.barWidth*i*2 + this.barPadding) + ' '+(this.chartInnerHeight - this.scale(d)) +')');
     },
     addAxis(group){
