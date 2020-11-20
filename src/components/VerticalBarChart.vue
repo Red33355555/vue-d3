@@ -20,6 +20,14 @@ export default {
           type:String,
           required:true
         },
+        width:{
+            type:Number,
+            required:true
+        },
+        height:{
+            type:Number,
+            required:true
+        },
         barColor:{
             type:String,
             required:false,
@@ -33,8 +41,6 @@ export default {
     },
     data(){
         return{
-            width: 500,
-            height:500,
             scale:null,
             colorScale:null,
             yAxis:null,
@@ -74,14 +80,11 @@ export default {
         this.addAxis(group);
     },
     setScales(){
-      const yScale = d3.scaleLinear()
-                .domain([0,d3.max(this.collection)])
-                .range([this.chartInnerHeight,0]);
       this.scale = d3.scaleLinear()
-          .domain([0,d3.max(this.collection)])
-          .range([0,this.chartInnerHeight]);
+                .domain([0,d3.max(this.collection)])
+                .range([this.chartInnerHeight,0])
       this.yAxis = d3.axisLeft()
-          .scale(yScale);
+          .scale(this.scale);
     },
     addBars(group){
       group
@@ -89,9 +92,16 @@ export default {
       .data(this.collection)
       .join('rect')
       .attr('fill',this.barColor)
-      .attr('height',d=> this.scale(d))
+      .attr('x',(d,i) => (this.barWidth*i*2 + this.barPadding))
       .attr('width',this.barWidth)
-      .attr('transform', (d,i) =>'translate('+ (this.barWidth*i*2 + this.barPadding) + ' '+(this.chartInnerHeight - this.scale(d)) +')');
+      .attr('y',this.scale(0))
+      .attr('height',this.chartInnerHeight - this.scale(0))
+      .transition()
+      .duration(2000)
+      .attr('y',(d) => (this.scale(d)))
+      .attr('height',d=> (this.chartInnerHeight - this.scale(d)))
+      .delay((d,i)=>i*100);
+      // .attr('transform', (d,i) =>'translate('+ (this.barWidth*i*2 + this.barPadding) + ' '+(this.chartInnerHeight - this.scale(d)) +')');
     },
     addAxis(group){
         group.append('g').call(this.yAxis)
@@ -105,10 +115,17 @@ export default {
   },
   watch:{
       collection(){
-        console.log('data changed');
         this.setScales();
         this.generateCanvas();
-      }
+      },
+      width(){
+        this.setScales();
+        this.generateCanvas();
+      },
+      height(){
+        this.setScales();
+        this.generateCanvas();
+      },
     }
 }
 </script>

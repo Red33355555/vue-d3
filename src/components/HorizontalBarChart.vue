@@ -20,6 +20,14 @@ export default {
           type:String,
           required:true
         },
+        width:{
+            type:Number,
+            required:true
+        },
+        height:{
+            type:Number,
+            required:true
+        },
         barColor:{
             type:String,
             required:false,
@@ -33,8 +41,6 @@ export default {
     },
   data(){
     return{
-      width: 500,
-      height:500,
       scale:null,
       colorScale:null,
       xAxis:null,
@@ -86,9 +92,15 @@ export default {
       .data(this.collection)
       .join('rect')
       .attr('fill',this.barColor)
+      .attr('y',(d,i)=>(this.barHeight * 2 * i))
       .attr('height',this.barHeight)
-      .attr('width',d=>this.scale(d))
-      .attr('transform', (d,i) =>'translate('+[0+' '+(this.barHeight * 2 * i)]+')');
+      .attr('width',this.scale(0))
+      .attr('x', 0)
+      .transition('width')
+      .duration(2000)
+      .attr('width',d => this.scale(d))
+      .delay((d,i)=>i*100);
+      // .attr('transform', (d,i) =>'translate('+[0+' '+(this.barHeight * 2 * i)]+')');
     },
     addAxis(group){
         group.append('g').call(this.xAxis)
@@ -101,11 +113,18 @@ export default {
     }
   },
   watch:{
-      collection(){
-        console.log('data changed');
-        this.setScales();
-        this.generateCanvas();
-      }
+        collection(){
+          this.setScales();
+          this.generateCanvas();
+        },
+        width(){
+            this.setScales();
+            this.generateCanvas();
+        },
+        height(){
+            this.setScales();
+            this.generateCanvas();
+        }
     }
 }
 </script>

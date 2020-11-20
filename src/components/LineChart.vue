@@ -20,6 +20,14 @@ export default {
           type:String,
           required:true
         },
+        width:{
+            type:Number,
+            required:true
+        },
+        height:{
+            type:Number,
+            required:true
+        },
         lineColor:{
             type:String,
             required:false,
@@ -33,8 +41,6 @@ export default {
     },
     data(){
         return{
-            width: 500,
-            height:500,
             xScale:null,
             yScale:null,
             colorScale:null,
@@ -117,10 +123,17 @@ export default {
     },
     watch:{
       collection(){
-        console.log('line','data changed');
         this.setScales();
         this.generateCanvas();
-      }
+      },
+      width(){
+        this.setScales();
+        this.generateCanvas();
+      },
+      height(){
+        this.setScales();
+        this.generateCanvas();
+      },
     }
 }
 </script>

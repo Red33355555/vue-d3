@@ -19,6 +19,14 @@ export default {
           type:String,
           required:true
         },
+        width:{
+            type:Number,
+            required:true
+        },
+        height:{
+            type:Number,
+            required:true
+        },
         backgroundColor:{
             type:String,
             required:false,
@@ -28,8 +36,6 @@ export default {
     },
     data(){
         return{
-            width: 500,
-            height:500,
             colorScale:null,
             pie:null,
             readyData:null
@@ -67,15 +73,16 @@ export default {
             .attr('transform', `translate(${this.width/2},${this.height/2})`);
             this.pie = d3.pie().value(d => d);
             this.readyData = this.pie(this.collection);
-            console.log('readyData',this.readyData);
         },
         addPath(){
             this.canvas.selectAll(`#${this.identifier}`)
             .data(this.readyData)
             .enter()
             .append('path')
+            .transition()
+            .duration(2000)
             .attr('d',d3.arc().innerRadius(0).outerRadius(this.radius))
-            .attr('fill',d => {console.log(d.data,this.colorScale(d.data)); return this.colorScale(d.data);})
+            .attr('fill',d => this.colorScale(d.data))
             .attr('stroke','black')
             .style('stroke-width','2px')
             .style('opacity', 0.7);
@@ -83,6 +90,14 @@ export default {
     },
     watch:{
         collection(){
+            this.generateCanvas();
+            this.addPath();
+        },
+        width(){
+            this.generateCanvas();
+            this.addPath();
+        },
+        height(){
             this.generateCanvas();
             this.addPath();
         }

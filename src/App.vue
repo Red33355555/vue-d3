@@ -7,6 +7,8 @@
       <hirizontal-bar-chart
         v-if="collection && collection.length > 0"
         :collection="collection"
+        :width="width"
+        :height="width"
         identifier="horizontal-chart"
       ></hirizontal-bar-chart>
     </base-card>
@@ -14,6 +16,8 @@
       <vertical-bar-chart
         v-if="collection && collection.length > 0"
         :collection="collection"
+        :width="width"
+        :height="width"
         identifier="vertical-chart"
       ></vertical-bar-chart>
     </base-card>
@@ -21,13 +25,17 @@
       <line-chart
         v-if="lineGraphCollection && lineGraphCollection.length > 0"
         :collection="lineGraphCollection"
-        identifier="line-chart-1"
+        :width="width"
+        :height="width"
+        identifier="line-chart"
       ></line-chart>
     </base-card>
     <base-card>
       <pie-chart
         v-if="collection && collection.length > 0"
         :collection="collection"
+        :width="width"
+        :height="width"
         identifier="pie-chart"
       ></pie-chart>
     </base-card>
@@ -100,13 +108,21 @@ export default {
           3:[60,20,30,99.99,250,88,93,509,40],
           4:[80,70,30,59,40]
         },
-        count:0
+        count:0,
+        width:500
       };
     },
     mounted(){
       this.alterData();
     },
+    created(){
+      window.addEventListener("resize", this.changeDimensions);
+    },
     methods:{
+      changeDimensions(){
+        this.width = (window.innerWidth/2) > 500 ? 500 : 250;
+        console.log('width',this.width);
+      },
       alterData(){
       setInterval(()=>{
         if(this.count<5){
@@ -131,6 +147,7 @@ export default {
   flex-wrap: wrap;
   justify-content: space-evenly;
   align-items: center;
+  align-content: flex-start;
 }
 .title {
   padding: 5px;
